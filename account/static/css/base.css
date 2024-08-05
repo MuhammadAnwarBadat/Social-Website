@@ -275,3 +275,51 @@ img.user-detail {
     font-style:italic;
     color:#ccc;
 }
+
+#header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #12c064; /* Adjust background color as needed */
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu li {
+    margin-right: 20px;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: #007bff; /* Adjust color as needed */
+}
+
+.menu li.selected a {
+    font-weight: bold;
+    color: #0056b3; /* Adjust color as needed */
+}
+
+.user {
+    display: flex;
+    align-items: center;
+}
+
+.user form {
+    margin: 0;
+    padding: 0;
+}
+
+.logout-button:hover {
+    color: #0056b3; /* Adjust color as needed */
+}
