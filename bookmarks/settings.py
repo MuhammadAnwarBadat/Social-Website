@@ -17,6 +17,8 @@ LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
 LOGIN_URL = reverse_lazy('login')   
 LOGOUT_URL = reverse_lazy('logout')
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
