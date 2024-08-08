@@ -1,8 +1,9 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
+from django.contrib.auth.models import User
 from .models import Profile
 from django.contrib import messages
 
@@ -33,19 +34,35 @@ def dashboard(request):
     )
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')  # Redirect authenticated users to the dashboard
+
     if request.method == 'POST':    
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            user = authenticate(username=cd['username'], password=cd['password'])
+            username_or_email = cd['username_or_email']
+            password = cd['password']
+            
+            user = authenticate(username=username_or_email, password=password)
+            if user is None:
+                try:
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(username=user_obj.username, password=password)
+                except User.DoesNotExist:
+                    pass
+
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponse('Authenticated successfully')
+                    messages.success(request, 'Authenticated successfully')
+                    return redirect('dashboard')  # Redirect to the dashboard
                 else:
-                    return HttpResponse('Disabled account')
+                    messages.error(request, 'Disabled account')
             else:
-                return HttpResponse('Invalid login')
+                messages.error(request, 'Invalid login')
+        else:
+            messages.error(request, 'Error in form submission')
     else:
         form = LoginForm()
     
