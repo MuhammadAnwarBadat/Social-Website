@@ -8,6 +8,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from .models import Profile
+from django.contrib.auth.forms import AuthenticationForm
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(
@@ -63,3 +64,6 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('date_of_birth', 'photo')
+
+class EmailAuthenticationForm(AuthenticationForm):
+    username = forms.EmailField(label="Email")
