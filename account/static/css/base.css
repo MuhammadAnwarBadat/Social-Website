@@ -320,6 +320,13 @@ img.user-detail {
     padding: 0;
 }
 
-.logout-button:hover {
-    color: #0056b3; /* Adjust color as needed */
+.login-button {
+    font-weight: bold;
+    background: #12c064;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 5px;
 }
