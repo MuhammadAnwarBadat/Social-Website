@@ -1,9 +1,3 @@
-# from django import forms
-
-# class LoginForm(forms.Form):
-#     username = forms.CharField()
-#     password = forms.CharField(widget=forms.PasswordInput)
-
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -45,21 +39,23 @@ class LoginForm(forms.Form):
     
     def clean(self):
         cleaned_data = super().clean()
-        username = cleaned_data.get("username")
+        username_or_email = cleaned_data.get("username_or_email")
         password = cleaned_data.get("password")
         
-        if username and password:
-            user = authenticate(username=username, password=password)
+        if username_or_email and password:
+            user = authenticate(username=username_or_email, password=password)
             if user is None:
-                raise forms.ValidationError("Invalid username or password")
-
+                self.add_error(None, "Invalid username or password")
+    
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
 
 class ProfileEditForm(forms.ModelForm):
-    date_of_birth = forms.DateField(widget=forms.TextInput(attrs={'class': 'datepicker'}))
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
 
     class Meta:
         model = Profile

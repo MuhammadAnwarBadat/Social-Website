@@ -37,35 +37,32 @@ def user_login(request):
     if request.user.is_authenticated:
         return redirect('dashboard')  # Redirect authenticated users to the dashboard
 
-    if request.method == 'POST':    
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            username_or_email = cd['username_or_email']
-            password = cd['password']
-            
-            user = authenticate(username=username_or_email, password=password)
-            if user is None:
-                try:
-                    user_obj = User.objects.get(email=username_or_email)
-                    user = authenticate(username=user_obj.username, password=password)
-                except User.DoesNotExist:
-                    pass
+    form = LoginForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        cd = form.cleaned_data
+        username_or_email = cd['username_or_email']
+        password = cd['password']
+        
+        # Try to authenticate using username or email
+        user = authenticate(username=username_or_email, password=password)
 
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    messages.success(request, 'Authenticated successfully')
-                    return redirect('dashboard')  # Redirect to the dashboard
-                else:
-                    messages.error(request, 'Disabled account')
+        # If authentication fails, try email-based login
+        if user is None:
+            try:
+                user_obj = User.objects.get(email=username_or_email)
+                user = authenticate(username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                pass
+
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect('dashboard')  # Redirect to the dashboard
             else:
-                messages.error(request, 'Invalid login')
+                form.add_error(None, 'Your account is disabled.')
         else:
-            messages.error(request, 'Error in form submission')
-    else:
-        form = LoginForm()
-    
+            form.add_error(None, 'Invalid username or password.')
+
     return render(request, 'account/login.html', {'form': form})
 
 def edit(request):
